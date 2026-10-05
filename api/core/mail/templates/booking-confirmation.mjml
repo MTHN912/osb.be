@@ -1,0 +1,41 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Helvetica, Arial, sans-serif" />
+      <mj-text color="#1f2933" font-size="14px" line-height="22px" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f4f5f7">
+    <mj-section background-color="#0b1f3a" padding="24px">
+      <mj-column>
+        <mj-text color="#ffffff" font-size="22px" font-weight="bold">{{dealerName}}</mj-text>
+        <mj-text color="#c7d2e0">Booking confirmation</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="24px">
+      <mj-column>
+        <mj-text>Hi {{customerName}},</mj-text>
+        <mj-text>Your service appointment has been received. Your booking ID is <strong>#{{bookingId}}</strong>.</mj-text>
+        <mj-table>
+          <tr><td width="40%"><strong>Date</strong></td><td>{{bookingDate}}</td></tr>
+          <tr><td><strong>Time</strong></td><td>{{bookingTime}}</td></tr>
+          <tr><td><strong>Vehicle</strong></td><td>{{vehicle}}</td></tr>
+          <tr><td><strong>Technician</strong></td><td>{{technicianName}}</td></tr>
+        </mj-table>
+        <mj-divider border-color="#e4e7eb" border-width="1px" />
+        <mj-table>
+          <tr style="text-align:left;"><th>Service</th><th>Duration</th><th align="right">Price</th></tr>
+          {{serviceRows}}
+          <tr><td><strong>Total</strong></td><td><strong>{{totalDuration}}</strong></td><td align="right"><strong>{{totalPrice}}</strong></td></tr>
+        </mj-table>
+        <mj-text>{{customerNote}}</mj-text>
+        <mj-text color="#616e7c" font-size="12px">You can view, reschedule or cancel this booking with your booking ID and phone number or plate.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="16px">
+      <mj-column>
+        <mj-text align="center" color="#7b8794" font-size="12px">{{dealerName}} · {{dealerAddress}} · {{dealerPhone}}<br />© {{currentYear}}</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

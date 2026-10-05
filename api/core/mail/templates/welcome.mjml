@@ -1,0 +1,27 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Helvetica, Arial, sans-serif" />
+      <mj-text color="#1f2933" font-size="14px" line-height="22px" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f4f5f7">
+    <mj-section background-color="#0b1f3a" padding="24px">
+      <mj-column>
+        <mj-text color="#ffffff" font-size="22px" font-weight="bold">{{dealerName}}</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#ffffff" padding="24px">
+      <mj-column>
+        <mj-text>Hi {{customerName}},</mj-text>
+        <mj-text>Your account has been created. You can now book and manage your car service appointments online.</mj-text>
+        <mj-button background-color="#1c64f2" href="{{bookingUrl}}">Book a service</mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="16px">
+      <mj-column>
+        <mj-text align="center" color="#7b8794" font-size="12px">{{dealerName}} · {{dealerAddress}} · {{dealerPhone}}<br />© {{currentYear}}</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

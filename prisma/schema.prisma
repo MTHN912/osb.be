@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DealerServiceType {
+  insurance_claim
+  car_service
+}
+
+enum BookingStatus {
+  Pending
+  BookedIn
+  CheckIn
+  Cancelled
+  Completed
+}
+
+enum ServiceKind {
+  Package
+  Addon
+}
+
+enum VehicleSizeClass {
+  Compact
+  Sedan
+  Suv
+  LargeSuvTruck
+}
+
+model Dealer {
+  id          Int               @id @default(autoincrement())
+  name        String
+  code        String            @unique
+  email       String?
+  phone       String?
+  address     String
+  city        String?
+  state       String?
+  zipCode     String?
+  latitude    Float?
+  longitude   Float?
+  logoUrl     String?
+  serviceType DealerServiceType @default(car_service)
+  active      Boolean           @default(true)
+  disabled    Boolean           @default(false)
+  parentId    Int?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  parent         Dealer?         @relation("DealerHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children       Dealer[]        @relation("DealerHierarchy")
+  users          User[]
+  customers      Customer[]
+  bookings       Booking[]
+  operatingHour  OperatingHour?
+  dealerServices DealerService[]
+  dealerPackages DealerPackage[]
+
+  @@map("dealers")
+}
+
+model OperatingHour {
+  id        Int      @id @default(autoincrement())
+  dealerId  Int      @unique
+  schedule  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dealer Dealer @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  @@map("operating_hours")
+}
+
+model Customer {
+  id                  Int      @id @default(autoincrement())
+  dealerId            Int
+  email               String
+  password            String?
+  firstName           String
+  lastName            String
+  phoneNumber         String
+  companyName         String?
+  addressLine1        String?
+  addressLine2        String?
+  suburb              String?
+  city                String?
+  state               String?
+  zipCode             String?
+  notes               String?
+  isActive            Boolean  @default(true)
+  isGuest             Boolean  @default(false)
+  currentResetToken   String?
+  currentRefreshToken String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  dealer   Dealer    @relation(fields: [dealerId], references: [id])
+  vehicles Vehicle[]
+  bookings Booking[]
+
+  @@unique([email, dealerId])
+  @@map("customers")
+}
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  dealerId            Int?
+  email               String?   @unique
+  password            String?
+  firstName           String
+  lastName            String
+  phoneNumber         String?
+  avatar              String?
+  isActive            Boolean   @default(true)
+  isBookable          Boolean   @default(true)
+  lastLoginAt         DateTime?
+  currentRefreshToken String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  dealer            Dealer?            @relation(fields: [dealerId], references: [id])
+  roles             UserRole[]
+  permissions       UserPermission[]
+  bookings          Booking[]
+
+  @@map("users")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions RolePermission[]
+  userRoles   UserRole[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  module      String?
+  action      String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           Int      @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserPermission {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  permissionId Int
+  isGranted    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  roleId    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+
+model VehicleBrand {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  models   VehicleModel[]
+  vehicles Vehicle[]
+
+  @@map("vehicle_brands")
+}
+
+model VehicleModel {
+  id        Int              @id @default(autoincrement())
+  brandId   Int
+  code      String           @unique
+  name      String
+  sizeClass VehicleSizeClass @default(Sedan)
+  isActive  Boolean          @default(true)
+  sortOrder Int              @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  brand    VehicleBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  vehicles Vehicle[]
+
+  @@map("vehicle_models")
+}
+
+model Vehicle {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  plate      String
+  vin        String?
+  brandId    Int?
+  modelId    Int?
+  variant    String?
+  year       Int?
+  city       String?
+  mileage    Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  brand    VehicleBrand? @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  model    VehicleModel? @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  bookings Booking[]
+
+  @@unique([customerId, plate])
+  @@map("vehicles")
+}
+
+model Booking {
+  id                Int           @id @default(autoincrement())
+  dealerId          Int
+  customerId        Int?
+  technicianId      Int?
+  vehicleId         Int?
+  bookingDate       DateTime
+  status            BookingStatus @default(Pending)
+  isGuest           Boolean       @default(false)
+  isAdmin           Boolean       @default(false)
+  needMobility      Boolean       @default(false)
+  estimatedDuration Int           @default(0)
+  estimatedPrice    Float?
+  currency          String        @default("USD")
+  serviceNote       String?
+  technicianNote    String?
+  customerNote      String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  dealer          Dealer           @relation(fields: [dealerId], references: [id])
+  customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  technician      User?            @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  vehicle         Vehicle?         @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  bookingServices BookingService[]
+
+  @@index([dealerId, bookingDate])
+  @@map("bookings")
+}
+
+model BookingService {
+  id        Int      @id @default(autoincrement())
+  bookingId Int
+  serviceId Int
+  price     Float?
+  duration  Int
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, serviceId])
+  @@map("booking_services")
+}
+
+model Package {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  description String?
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  packageServices PackageService[]
+  dealerPackages  DealerPackage[]
+
+  @@map("packages")
+}
+
+model Service {
+  id            Int         @id @default(autoincrement())
+  code          String      @unique
+  name          String
+  description   String?
+  kind          ServiceKind @default(Package)
+  price         Float?
+  currency      String      @default("USD")
+  duration      Int         @default(30)
+  durationUnit  String      @default("minutes")
+  sizeSensitive Boolean     @default(false)
+  imageUrl      String?
+  isActive      Boolean     @default(true)
+  isPopular     Boolean     @default(false)
+  sortOrder     Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  packageServices PackageService[]
+  dealerServices  DealerService[]
+  bookingServices BookingService[]
+
+  @@map("services")
+}
+
+model PackageService {
+  id        Int      @id @default(autoincrement())
+  packageId Int
+  serviceId Int
+  createdAt DateTime @default(now())
+
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, serviceId])
+  @@map("package_services")
+}
+
+model DealerService {
+  id        Int      @id @default(autoincrement())
+  dealerId  Int
+  serviceId Int
+  createdAt DateTime @default(now())
+
+  dealer  Dealer  @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([dealerId, serviceId])
+  @@map("dealer_services")
+}
+
+model DealerPackage {
+  id        Int      @id @default(autoincrement())
+  dealerId  Int
+  packageId Int
+  createdAt DateTime @default(now())
+
+  dealer  Dealer  @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  package Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([dealerId, packageId])
+  @@map("dealer_packages")
+}
