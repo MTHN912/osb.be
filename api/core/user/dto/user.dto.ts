@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateUserDto {
@@ -31,28 +31,3 @@ export class CreateUserDto {
   dealerId?: number;
 }
 
-export class CreateTechnicianDto {
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
-
-  @IsOptional()
-  @IsEmail()
-  email?: string;
-
-  @IsOptional()
-  @IsString()
-  phoneNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  avatar?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isBookable?: boolean;
-}

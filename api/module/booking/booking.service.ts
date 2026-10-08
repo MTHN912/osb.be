@@ -3,7 +3,6 @@ import { BookingStatus } from '@prisma/client';
 import { CrudService, CrudOperations } from '../../core/crud/crud.service';
 import { PrismaService } from '../../core/prisma/prisma.service';
 import { BaseSearchDto } from '../../core/crud/dto/base-search.dto';
-import { UserService } from '../../core/user/user.service';
 import { MailService } from '../../core/mail/mail.service';
 import { AuthCustomerService } from '../../core/auth-customer/auth-customer.service';
 import { VehicleService, ResolvedVehicle } from '../vehicle/vehicle.service';
@@ -21,6 +20,7 @@ import {
   AdminBookingDto,
   AppointmentDto,
   BaseBookingDto,
+  CustomerVehicleBookingSearchDto,
   GuestBookingDto,
   LookupBookingDto,
   PackageDto,
@@ -39,7 +39,6 @@ export class BookingService extends CrudService {
 
   constructor(
     prisma: PrismaService,
-    private readonly userService: UserService,
     private readonly vehicleService: VehicleService,
     private readonly mailService: MailService,
     private readonly authCustomerService: AuthCustomerService,
@@ -50,9 +49,6 @@ export class BookingService extends CrudService {
   async processBooking(dto: BaseBookingDto, dealerId: number | undefined, mode: BookingMode, user?: AuthUser) {
     const tenantId = requireDealerId(dealerId);
     const services = await this.validatePackages(dto.packages);
-    if (dto.technicianId) {
-      await this.userService.findTechnician(dto.technicianId, tenantId);
-    }
 
     const bookingDate = parseDateTime(dto.bookingDate, dto.bookingTime);
     const vehicle = await this.vehicleService.resolve(dto.vehicle);
@@ -66,7 +62,6 @@ export class BookingService extends CrudService {
         data: {
           customerId: customer.id,
           vehicleId,
-          technicianId: dto.technicianId,
           bookingDate,
           isGuest: mode === 'guest',
           isAdmin: mode === 'admin',
@@ -74,7 +69,6 @@ export class BookingService extends CrudService {
           estimatedDuration: quote.estimatedDuration,
           estimatedPrice: quote.estimatedPrice,
           serviceNote: dto.serviceNote,
-          technicianNote: dto.technicianNote,
           customerNote: dto.customerNote,
         },
         dealerId: tenantId,
@@ -94,6 +88,10 @@ export class BookingService extends CrudService {
   }
 
   async searchBookings(dto: BaseSearchDto, dealerId?: number) {
+    if (dto.include && typeof dto.include === 'object' && 'technician' in dto.include) {
+      const { technician: _t, ...restInclude } = dto.include as any;
+      dto.include = restInclude;
+    }
     const result = await this.findAll({
       where: dto.where,
       include: dto.include ?? BOOKING_DETAIL_INCLUDE,
@@ -106,6 +104,29 @@ export class BookingService extends CrudService {
       dealerId,
     });
     const data = dto.include ? result.data.map((b) => sanitizeBooking(b)) : result.data.map((b) => formatBooking(b));
+    return { ...result, data };
+  }
+
+  async searchCustomerVehicleBookings(customerId: number, dto: CustomerVehicleBookingSearchDto = {}) {
+    const where: Record<string, any> = {
+      customerId,
+      ...(dto?.vehicleId ? { vehicleId: Number(dto.vehicleId) } : {}),
+      ...(dto?.status ? { status: dto.status } : {}),
+      ...(dto?.where ?? {}),
+    };
+
+    const result = await this.findAll({
+      where,
+      include: dto?.include ?? BOOKING_DETAIL_INCLUDE,
+      orderBy: dto?.orderBy ?? { bookingDate: 'desc' },
+      search: dto?.search,
+      page: dto?.page,
+      pageSize: dto?.pageSize,
+      take: dto?.take,
+      skip: dto?.skip,
+    });
+
+    const data = result.data.map((b) => formatBooking(b));
     return { ...result, data };
   }
 
@@ -318,20 +339,38 @@ export class BookingService extends CrudService {
   private async sendConfirmation(booking: Record<string, any>) {
     if (!booking.customer?.email) return;
     try {
+      const cust = booking.customer || {};
+      const fullAddress = [
+        cust.addressLine1,
+        cust.addressLine2,
+        cust.suburb,
+        cust.city,
+        cust.state,
+        cust.zipCode,
+      ]
+        .filter(Boolean)
+        .join(', ') || '-';
+
+      const v = booking.vehicle || {};
       await this.mailService.sendBookingConfirmation({
-        to: booking.customer.email,
-        customerName: `${booking.customer.firstName} ${booking.customer.lastName}`,
+        to: cust.email,
+        customerName: `${cust.firstName || ''} ${cust.lastName || ''}`.trim() || 'Valued Customer',
+        customerEmail: cust.email || '-',
+        customerMobile: cust.phoneNumber || '-',
+        customerAddress: fullAddress,
         bookingId: booking.id,
         bookingDate: booking.bookingDate,
+        licensePlate: v.plate || '-',
+        make: v.brand?.name || '-',
+        model: v.model?.name || '-',
+        year: v.year ? String(v.year) : '-',
+        vin: v.vin || '-',
         vehicle: vehicleLabel(booking.vehicle),
-        services: booking.packages.flatMap((pkg: { services: { name: string; duration: number; price: number | null }[] }) =>
-          pkg.services.map((s) => ({ name: s.name, duration: s.duration, price: s.price })),
+        services: (booking.packages || []).flatMap((pkg: { services: { name: string; duration?: number; price?: number | null }[] }) =>
+          (pkg.services || []).map((s) => ({ name: s.name, duration: s.duration, price: s.price })),
         ),
         estimatedDuration: booking.estimatedDuration,
         estimatedPrice: booking.estimatedPrice,
-        technicianName: booking.technician
-          ? `${booking.technician.firstName} ${booking.technician.lastName}`
-          : t('TECHNICIAN_UNASSIGNED'),
         customerNote: booking.customerNote,
         dealer: { name: booking.dealer.name, address: booking.dealer.address, phone: booking.dealer.phone },
       });

@@ -18,10 +18,10 @@ export function getEnvOrThrow<T = string>(config: ConfigService, key: string): T
   return value;
 }
 
-export function getEnv<T = string>(config: ConfigService, key: string): T | undefined {
+export function getEnv<T = string>(config: ConfigService, key: string, fallback?: T): T | undefined {
   const value = config.get<T>(key);
   if (value === undefined || value === null || value === '') {
-    return undefined;
+    return fallback;
   }
   return value;
 }

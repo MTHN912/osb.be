@@ -19,7 +19,6 @@ async function main() {
   const roles = [
     { code: 'super_admin', name: 'Super Admin', description: 'System Administrator' },
     { code: 'dealer_manager', name: 'Dealer Manager', description: 'Dealer Branch Manager' },
-    { code: 'technician', name: 'Technician', description: 'Service Technician' },
   ];
 
   for (const role of roles) {
@@ -32,54 +31,6 @@ async function main() {
 
   const dealersData = [
     {
-      id: 2,
-      name: 'Dragon Auto Body',
-      code: 'GLOBAL',
-      address: 'Global Headquarters',
-      phone: null,
-      email: null,
-      active: false,
-      disabled: true,
-      serviceType: 'insurance_claim',
-      parentId: null,
-    },
-    {
-      id: 1,
-      name: 'Viet Auto',
-      code: 'VIETAUTO',
-      address: '1308 Knight St, Arlington, TX 76015',
-      phone: '(682) 847-3979',
-      email: 'claims@vietautorepair.com',
-      active: true,
-      disabled: false,
-      serviceType: 'insurance_claim',
-      parentId: 2,
-    },
-    {
-      id: 3,
-      name: 'Lams Auto Body',
-      code: 'LAMSAUTO',
-      address: '1305 Knight St, Arlington, TX 76015',
-      phone: '(817) 375-5163',
-      email: null,
-      active: false,
-      disabled: true,
-      serviceType: 'insurance_claim',
-      parentId: 2,
-    },
-    {
-      id: 4,
-      name: 'VK Auto',
-      code: 'VKAUTO',
-      address: '1125 Colorado Ln Ste a, Arlington, TX 76015',
-      phone: '(682) 999-1583',
-      email: null,
-      active: true,
-      disabled: false,
-      serviceType: 'insurance_claim',
-      parentId: 2,
-    },
-    {
       id: 6,
       name: 'Car Wash and Mechanic Dealer',
       code: 'CARWASH',
@@ -89,7 +40,7 @@ async function main() {
       active: true,
       disabled: false,
       serviceType: 'car_service',
-      parentId: 2,
+      parentId: null,
     },
   ];
 
@@ -104,6 +55,7 @@ async function main() {
         active: dealer.active,
         disabled: dealer.disabled,
         serviceType: dealer.serviceType,
+        parentId: null,
       },
       create: dealer,
     });
@@ -117,9 +69,8 @@ async function main() {
   }
 
   const packagesData = [
-    { code: 'insurance-claim', name: 'Insurance Claim', description: 'Insurance Claim & Collision Repair', sortOrder: 1 },
-    { code: 'car-service', name: 'Car Maintenance & Repair', description: 'Periodic service, brake, oil, and mechanical repairs', sortOrder: 2 },
-    { code: 'car-wash', name: 'Car Detailing & Wash', description: 'Professional wash, polish, and interior deep clean', sortOrder: 3 },
+    { code: 'car-service', name: 'Car Maintenance & Repair', description: 'Periodic service, brake, oil, and mechanical repairs', sortOrder: 1 },
+    { code: 'car-wash', name: 'Car Detailing & Wash', description: 'Professional wash, polish, and interior deep clean', sortOrder: 2 },
   ];
 
   for (const pkg of packagesData) {
@@ -131,34 +82,32 @@ async function main() {
   }
 
   const servicesData = [
-    { code: 'hail-repair', name: 'Hail Damage Repair', kind: 'Package', price: null, duration: 120, sizeSensitive: false, packageCode: 'insurance-claim' },
-    { code: 'collision-repair', name: 'Collision Repair', kind: 'Package', price: null, duration: 240, sizeSensitive: false, packageCode: 'insurance-claim' },
-    { code: 'general-repair', name: 'General Repair', kind: 'Package', price: 150, duration: 90, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'maintenance', name: 'Maintenance Package', kind: 'Package', price: 200, duration: 120, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'other-check', name: 'Diagnostic Check', kind: 'Package', price: 80, duration: 60, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'periodic-minor', name: 'Periodic Service (Minor)', kind: 'Package', price: 150, duration: 90, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'periodic-major', name: 'Periodic Service (Major)', kind: 'Package', price: 450, duration: 240, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'oil-filter', name: 'Oil & Filter Change', kind: 'Package', price: 80, duration: 60, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'brake-service', name: 'Brake Service & Pad Replacement', kind: 'Package', price: 200, duration: 120, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'tire-alignment', name: 'Tire Balancing & Wheel Alignment', kind: 'Package', price: 120, duration: 90, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'battery', name: 'Battery Test & Replacement', kind: 'Package', price: 100, duration: 45, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'ac-service', name: 'A/C Evacuation & Recharge', kind: 'Package', price: 130, duration: 90, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'diagnostics', name: 'OBD-II Computer Diagnostics', kind: 'Package', price: 90, duration: 60, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'other-request', name: 'Custom Service Request', kind: 'Package', price: null, duration: 60, sizeSensitive: false, packageCode: 'car-service' },
-    { code: 'express-wash', name: 'Express Exterior Wash', kind: 'Package', price: 35, duration: 45, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'exterior-detail', name: 'Exterior Detail & Hand Wax', kind: 'Package', price: 180, duration: 180, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'interior-deep-clean', name: 'Interior Deep Clean & Steam', kind: 'Package', price: 160, duration: 180, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'full-detail', name: 'Full Detail (In & Out)', kind: 'Package', price: 320, duration: 360, sizeSensitive: true, packageCode: 'car-wash', isPopular: true },
-    { code: 'paint-correction-1', name: 'Stage 1 Paint Correction', kind: 'Package', price: 400, duration: 360, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'ceramic-coating', name: 'Ceramic Coating (2-Year)', kind: 'Package', price: 800, duration: 480, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'ppf-front', name: 'PPF Front Bumper & Hood', kind: 'Package', price: 1200, duration: 480, sizeSensitive: true, packageCode: 'car-wash' },
-    { code: 'headlight-restore', name: 'Headlight Restoration', kind: 'Package', price: 80, duration: 60, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'engine-bay', name: 'Engine Bay Detailing', kind: 'Package', price: 60, duration: 60, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'odor-treatment', name: 'Ozone Odor Treatment', kind: 'Package', price: 100, duration: 90, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'leather-care', name: 'Leather Conditioning Addon', kind: 'Addon', price: 40, duration: 30, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'glass-coating', name: 'Rain-X Glass Hydrophobic Coating', kind: 'Addon', price: 50, duration: 30, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'wheel-coating', name: 'Ceramic Wheel Coating', kind: 'Addon', price: 80, duration: 45, sizeSensitive: false, packageCode: 'car-wash' },
-    { code: 'pet-hair', name: 'Excessive Pet Hair Removal', kind: 'Addon', price: 35, duration: 30, sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'general-repair', name: 'General Repair', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'maintenance', name: 'Maintenance Package', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'other-check', name: 'Diagnostic Check', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'periodic-minor', name: 'Periodic Service (Minor)', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'periodic-major', name: 'Periodic Service (Major)', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'oil-filter', name: 'Oil & Filter Change', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'brake-service', name: 'Brake Service & Pad Replacement', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'tire-alignment', name: 'Tire Balancing & Wheel Alignment', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'battery', name: 'Battery Test & Replacement', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'ac-service', name: 'A/C Evacuation & Recharge', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'diagnostics', name: 'OBD-II Computer Diagnostics', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'other-request', name: 'Custom Service Request', kind: 'Package', sizeSensitive: false, packageCode: 'car-service' },
+    { code: 'express-wash', name: 'Express Exterior Wash', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'exterior-detail', name: 'Exterior Detail & Hand Wax', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'interior-deep-clean', name: 'Interior Deep Clean & Steam', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'full-detail', name: 'Full Detail (In & Out)', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash', isPopular: true },
+    { code: 'paint-correction-1', name: 'Stage 1 Paint Correction', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'ceramic-coating', name: 'Ceramic Coating (2-Year)', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'ppf-front', name: 'PPF Front Bumper & Hood', kind: 'Package', sizeSensitive: true, packageCode: 'car-wash' },
+    { code: 'headlight-restore', name: 'Headlight Restoration', kind: 'Package', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'engine-bay', name: 'Engine Bay Detailing', kind: 'Package', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'odor-treatment', name: 'Ozone Odor Treatment', kind: 'Package', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'leather-care', name: 'Leather Conditioning Addon', kind: 'Addon', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'glass-coating', name: 'Rain-X Glass Hydrophobic Coating', kind: 'Addon', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'wheel-coating', name: 'Ceramic Wheel Coating', kind: 'Addon', sizeSensitive: false, packageCode: 'car-wash' },
+    { code: 'pet-hair', name: 'Excessive Pet Hair Removal', kind: 'Addon', sizeSensitive: false, packageCode: 'car-wash' },
   ];
 
   for (const s of servicesData) {
@@ -183,12 +132,7 @@ async function main() {
   const allPackages = await prisma.package.findMany({ include: { packageServices: { include: { service: true } } } });
 
   for (const dealer of allDealers) {
-    const targetPackages =
-      dealer.serviceType === 'insurance_claim'
-        ? allPackages.filter((p) => p.code === 'insurance-claim')
-        : allPackages.filter((p) => p.code === 'car-service' || p.code === 'car-wash');
-
-    for (const pkg of targetPackages) {
+    for (const pkg of allPackages) {
       await prisma.dealerPackage.upsert({
         where: { dealerId_packageId: { dealerId: dealer.id, packageId: pkg.id } },
         update: {},
@@ -293,32 +237,7 @@ async function main() {
     });
   }
 
-  const techRole = await prisma.role.findUnique({ where: { code: 'technician' } });
-  const carwashDealer = await prisma.dealer.findUnique({ where: { code: 'CARWASH' } });
 
-  if (techRole && carwashDealer) {
-    const techUser = await prisma.user.upsert({
-      where: { email: 'tech1@vietautorepair.com' },
-      update: {
-        dealer: { connect: { id: carwashDealer.id } },
-        isBookable: true,
-      },
-      create: {
-        email: 'tech1@vietautorepair.com',
-        firstName: 'John',
-        lastName: 'Mechanic',
-        phoneNumber: '(682) 847-3901',
-        dealer: { connect: { id: carwashDealer.id } },
-        isBookable: true,
-      },
-    });
-
-    await prisma.userRole.upsert({
-      where: { userId_roleId: { userId: techUser.id, roleId: techRole.id } },
-      update: {},
-      create: { userId: techUser.id, roleId: techRole.id },
-    });
-  }
 }
 
 main()

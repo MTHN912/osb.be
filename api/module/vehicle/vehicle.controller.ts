@@ -1,17 +1,19 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { VehicleDto } from './dto/vehicle.dto';
+import { BaseSearchDto } from '../../core/crud/dto/base-search.dto';
 import { CustomerAuthGuard } from '../../core/auth-customer/guards/customer-auth.guard';
 import { CurrentUser, AuthUser } from '../../shared/decorators/current-user.decorator';
 
-@Controller('vehicles')
+@Controller(['vehicle', 'vehicles'])
 @UseGuards(CustomerAuthGuard)
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
-  @Get()
-  list(@CurrentUser() user: AuthUser) {
-    return this.vehicleService.listMine(user.id);
+  @Post('customer/search')
+  @HttpCode(HttpStatus.OK)
+  searchCustomerVehicles(@CurrentUser() user: AuthUser, @Body() dto: BaseSearchDto) {
+    return this.vehicleService.searchCustomerVehicles(user.id, dto);
   }
 
   @Post()

@@ -1,9 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CrudService } from '../crud/crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { BaseSearchDto } from '../crud/dto/base-search.dto';
-import { t } from '../../shared/utils/i18n.util';
-import { CreateServiceDto, UpdateServiceDto } from './dto/service.dto';
+import { CreateServiceDto } from './dto/service.dto';
 import { SERVICE_DEFAULT_INCLUDE } from './constants/service.constant';
 
 @Injectable()
@@ -27,32 +26,6 @@ export class ServiceService extends CrudService {
     return this.findOne({ where: { id: service.id }, include: SERVICE_DEFAULT_INCLUDE });
   }
 
-  async addServiceToPackage(packageId: number, serviceId: number) {
-    await this.findOne({ model: 'Package', where: { id: packageId }, throwError: true });
-    await this.findOne({ where: { id: serviceId }, throwError: true });
-
-    const existing = await this.findOne({ model: 'PackageService', where: { packageId, serviceId } });
-    if (existing) {
-      throw new ConflictException(t('SERVICE_ALREADY_IN_PACKAGE'));
-    }
-
-    return this.create({
-      model: 'PackageService',
-      data: { packageId, serviceId },
-      include: { package: true, service: true },
-    });
-  }
-
-  async updateService(id: number, dto: UpdateServiceDto) {
-    await this.findOne({ where: { id }, throwError: true });
-    return this.update({ where: { id }, data: { ...dto } });
-  }
-
-  async updateServiceIsActive(id: number, isActive: boolean) {
-    await this.findOne({ where: { id }, throwError: true });
-    return this.update({ where: { id }, data: { isActive } });
-  }
-
   async searchServices(dto: BaseSearchDto, dealerId?: number, isPublic = false) {
     const where: Record<string, unknown> = { ...(dto.where ?? {}) };
     if (isPublic) where.isActive = true;
@@ -68,15 +41,5 @@ export class ServiceService extends CrudService {
       take: dto.take,
       skip: dto.skip,
     });
-  }
-
-  async getServicesByPackageId(packageId: number) {
-    const pkg = await this.findOne({
-      model: 'Package',
-      where: { id: packageId },
-      include: { packageServices: { include: { service: true } } },
-      throwError: true,
-    });
-    return pkg.packageServices.map((ps: { service: unknown }) => ps.service);
   }
 }

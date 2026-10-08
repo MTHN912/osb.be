@@ -21,7 +21,7 @@ export const MODEL_CACHE_DEPENDENCIES: Record<string, string[]> = {
   Vehicle: ['Customer', 'Booking'],
   Booking: ['BookingService', 'Customer', 'Vehicle'],
   BookingService: ['Booking'],
-  User: ['UserRole', 'Booking'],
+  User: ['UserRole'],
   UserRole: ['User'],
   Role: ['UserRole', 'User'],
   VehicleBrand: ['VehicleModel'],

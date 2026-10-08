@@ -4,6 +4,7 @@ import { CrudService } from '../../core/crud/crud.service';
 import { PrismaService } from '../../core/prisma/prisma.service';
 import { VehicleDto } from './dto/vehicle.dto';
 import { VEHICLE_DEFAULT_INCLUDE } from './constants/vehicle.constant';
+import { BaseSearchDto } from '../../core/crud/dto/base-search.dto';
 
 export interface ResolvedVehicle {
   data: {
@@ -52,13 +53,24 @@ export class VehicleService extends CrudService {
     };
   }
 
-  async listMine(customerId: number) {
+  async searchCustomerVehicles(customerId: number, dto: BaseSearchDto = {}) {
+    const where: Record<string, any> = {
+      customerId,
+      ...(dto?.where ?? {}),
+    };
+
     const result = await this.findAll({
-      where: { customerId },
-      include: VEHICLE_DEFAULT_INCLUDE,
-      orderBy: { createdAt: 'desc' },
+      where,
+      include: dto?.include ?? VEHICLE_DEFAULT_INCLUDE,
+      orderBy: dto?.orderBy ?? { createdAt: 'desc' },
+      search: dto?.search,
+      page: dto?.page,
+      pageSize: dto?.pageSize,
+      take: dto?.take,
+      skip: dto?.skip,
     });
-    return result.data;
+
+    return result;
   }
 
   async createMine(customerId: number, dto: VehicleDto) {

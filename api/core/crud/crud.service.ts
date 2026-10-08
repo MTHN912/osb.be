@@ -41,6 +41,26 @@ function nestRelation(path: string, condition: PrismaArgs): PrismaArgs {
   return path.split('.').reduceRight<PrismaArgs>((acc, part) => ({ [part]: acc }), condition);
 }
 
+function sanitizeInclude(model: string, include?: PrismaArgs): PrismaArgs | undefined {
+  if (!include || typeof include !== 'object') return include;
+  const result: PrismaArgs = { ...include };
+  if (model === 'Booking') {
+    delete result.technician;
+  }
+  for (const [key, value] of Object.entries(result)) {
+    if (value && typeof value === 'object') {
+      if (key === 'bookings' || key === 'booking') {
+        const nested = value as PrismaArgs;
+        result[key] = {
+          ...nested,
+          ...(nested.include ? { include: sanitizeInclude('Booking', nested.include) } : {}),
+        };
+      }
+    }
+  }
+  return result;
+}
+
 function withSearch(where: PrismaArgs, model: string, search?: string): PrismaArgs {
   const query = search?.trim();
   const config = MODEL_SEARCH_CONFIG[model];
@@ -75,7 +95,7 @@ function cacheKey(model: string, operation: string, params: object): string {
 async function runFindOne<T>(client: PrismaClientLike, model: string, params: FindOneParams): Promise<T | null> {
   const query: PrismaArgs = { where: withTenant(params.where, model, params.dealerId) };
   if (params.select) query.select = params.select;
-  if (params.include) query.include = params.include;
+  if (params.include) query.include = sanitizeInclude(model, params.include);
   if (params.orderBy) query.orderBy = params.orderBy;
 
   const result = await getDelegate(client, model).findFirst(query);
@@ -92,7 +112,7 @@ async function runFindAll<T>(client: PrismaClientLike, model: string, params: Fi
 
   const query: PrismaArgs = { where };
   if (params.select) query.select = params.select;
-  if (params.include) query.include = params.include;
+  if (params.include) query.include = sanitizeInclude(model, params.include);
   if (params.orderBy) query.orderBy = params.orderBy;
   if (take !== undefined) query.take = take;
   if (skip !== undefined) query.skip = skip;
@@ -120,7 +140,7 @@ async function runCreate<T>(client: PrismaClientLike, model: string, params: Cre
   }
   const query: PrismaArgs = { data };
   if (params.select) query.select = params.select;
-  if (params.include) query.include = params.include;
+  if (params.include) query.include = sanitizeInclude(model, params.include);
   return getDelegate(client, model).create(query);
 }
 
@@ -139,7 +159,7 @@ async function runUpdate<T>(client: PrismaClientLike, model: string, params: Upd
     data: params.data,
   };
   if (params.select) query.select = params.select;
-  if (params.include) query.include = params.include;
+  if (params.include) query.include = sanitizeInclude(model, params.include);
   return getDelegate(client, model).update(query);
 }
 

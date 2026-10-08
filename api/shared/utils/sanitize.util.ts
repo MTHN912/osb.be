@@ -13,7 +13,6 @@ export function sanitizeBooking<T extends Record<string, any> | null | undefined
   if (!booking || typeof booking !== 'object') return booking;
   const result: Record<string, any> = { ...booking };
   if (result.customer) result.customer = stripSecrets(result.customer);
-  if (result.technician) result.technician = stripSecrets(result.technician);
   return result as T;
 }
 

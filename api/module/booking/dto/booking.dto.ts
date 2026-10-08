@@ -16,6 +16,18 @@ import { Type } from 'class-transformer';
 import { BookingStatus } from '@prisma/client';
 import { VehicleDto } from '../../vehicle/dto/vehicle.dto';
 import { LOOKUP_MIN_IDENTIFIER_LENGTH } from '../../../shared/constants/booking.constant';
+import { BaseSearchDto } from '../../../core/crud/dto/base-search.dto';
+
+export class CustomerVehicleBookingSearchDto extends BaseSearchDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  vehicleId?: number;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+}
 
 export class PackageServiceDto {
   @Type(() => Number)
@@ -61,21 +73,12 @@ export class BaseBookingDto extends AppointmentDto {
   vehicle: VehicleDto;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  technicianId?: number;
-
-  @IsOptional()
   @IsBoolean()
   needMobility?: boolean;
 
   @IsOptional()
   @IsString()
   serviceNote?: string;
-
-  @IsOptional()
-  @IsString()
-  technicianNote?: string;
 
   @IsOptional()
   @IsString()
@@ -185,12 +188,4 @@ export class TimeSlotsPeriodDto extends ServiceCodesDto {
   endDate: string;
 }
 
-export class AvailableTechniciansDto extends ServiceCodesDto {
-  @IsString()
-  @IsNotEmpty()
-  date: string;
 
-  @IsString()
-  @IsNotEmpty()
-  time: string;
-}

@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ServiceKind } from '@prisma/client';
 
@@ -24,26 +24,6 @@ export class CreateServiceDto {
   kind?: ServiceKind;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(0)
-  price?: number;
-
-  @IsOptional()
-  @IsString()
-  currency?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  duration?: number;
-
-  @IsOptional()
-  @IsString()
-  durationUnit?: string;
-
-  @IsOptional()
   @IsBoolean()
   sizeSensitive?: boolean;
 
@@ -65,51 +45,3 @@ export class CreateServiceDto {
   sortOrder?: number;
 }
 
-export class UpdateServiceDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(0)
-  price?: number;
-
-  @IsOptional()
-  @IsString()
-  currency?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  duration?: number;
-
-  @IsOptional()
-  @IsString()
-  durationUnit?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  sizeSensitive?: boolean;
-}
-
-export class UpdateServiceIsActiveDto {
-  @IsBoolean()
-  isActive: boolean;
-}
-
-export class AddServiceToPackageDto {
-  @Type(() => Number)
-  @IsInt()
-  packageId: number;
-
-  @Type(() => Number)
-  @IsInt()
-  serviceId: number;
-}

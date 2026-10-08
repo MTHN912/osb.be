@@ -8,6 +8,7 @@ import { AuthUser, CurrentUser } from '../../shared/decorators/current-user.deco
 import {
   AdminBookingDto,
   BaseBookingDto,
+  CustomerVehicleBookingSearchDto,
   GuestBookingDto,
   LookupBookingDto,
   RescheduleLookupDto,
@@ -16,7 +17,7 @@ import {
   UpdateStatusDto,
 } from './dto/booking.dto';
 
-@Controller('booking')
+@Controller(['booking', 'bookings'])
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
@@ -42,6 +43,16 @@ export class BookingController {
   @UseGuards(JwtAuthGuard)
   search(@Body() dto: BaseSearchDto, @DealerId() dealerId?: number) {
     return this.bookingService.searchBookings(dto, dealerId);
+  }
+
+  @Post('vehicle/search')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(CustomerAuthGuard)
+  searchCustomerVehicleBookings(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: CustomerVehicleBookingSearchDto,
+  ) {
+    return this.bookingService.searchCustomerVehicleBookings(user.id, dto);
   }
 
   @Post('lookup')

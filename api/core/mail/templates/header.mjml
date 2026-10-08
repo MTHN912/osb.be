@@ -1,0 +1,26 @@
+
+<mj-section
+  background-url="https://res.cloudinary.com/dvpbyjdtn/image/upload/w_600,q_80/v1791077097/cadilac2_jifrp7.jpg"
+  background-color="#0F172A"
+  background-size="cover"
+  background-repeat="no-repeat"
+  padding="36px 24px 32px 24px"
+  text-align="center"
+>
+  <mj-column width="100%">
+    <mj-image
+      src="cid:logo"
+      alt="{{dealerName}}"
+      width="54px"
+      height="54px"
+      padding="0 0 12px 0"
+      align="center"
+    />
+    <mj-text align="center" color="#FFFFFF" font-size="24px" font-weight="700" line-height="30px" letter-spacing="1px" text-transform="uppercase" padding="0">
+      {{dealerName}}
+    </mj-text>
+    <mj-text align="center" color="#E2E8F0" font-size="12px" font-weight="500" text-transform="uppercase" letter-spacing="2px" padding="6px 0 0 0">
+      Online Service Booking
+    </mj-text>
+  </mj-column>
+</mj-section>

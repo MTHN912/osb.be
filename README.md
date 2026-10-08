@@ -76,7 +76,7 @@ All routes are prefixed with `/api`. Multi-tenant requests should include the he
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `POST` | `/api/auth/login` | Public | Staff login (admin / manager / technician) |
+| `POST` | `/api/auth/login` | Public | Staff login (admin / manager) |
 | `POST` | `/api/auth/refresh` | Public | Refresh staff JWT token |
 | `POST` | `/api/auth/logout` | Staff JWT | Staff logout |
 | `POST` | `/api/customer/login` | Public (`x-dealer-id`) | Customer login |
@@ -95,7 +95,6 @@ All routes are prefixed with `/api`. Multi-tenant requests should include the he
 |---|---|---|---|
 | `POST` | `/api/vehicle-catalog/brands/search` | Public | Search vehicle makes/brands |
 | `POST` | `/api/vehicle-catalog/models/search` | Public | Search vehicle models with size class |
-| `GET`  | `/api/vehicles` | Customer JWT | List logged-in customer vehicles |
 | `POST` | `/api/vehicles` | Customer JWT | Save customer vehicle |
 | `PATCH`| `/api/vehicles/:id` | Customer JWT | Update customer vehicle |
 | `DELETE`| `/api/vehicles/:id` | Customer JWT | Delete customer vehicle |
@@ -115,7 +114,6 @@ All routes are prefixed with `/api`. Multi-tenant requests should include the he
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
 | `POST` | `/api/booking-appointment/time-slots-period` | Public (`x-dealer-id`) | Available booking dates and 30-min time slots |
-| `POST` | `/api/booking-appointment/available-technicians`| Public (`x-dealer-id`) | Bookable technicians free at given slot |
 | `POST` | `/api/booking` | Customer JWT (`x-dealer-id`)| Create customer booking |
 | `POST` | `/api/booking/guest` | Public (`x-dealer-id`) | Create guest booking (auto-registers guest customer) |
 | `POST` | `/api/booking/admin` | Staff JWT (`x-dealer-id`) | Create booking on behalf of customer |
@@ -136,7 +134,7 @@ All routes are prefixed with `/api`. Multi-tenant requests should include the he
 | Backend Status (`BookingStatus`) | Frontend Status | Notes |
 |---|---|---|
 | `Pending` | `pending` | Newly created appointment awaiting check-in |
-| `BookedIn` | `confirmed` | Confirmed appointment (blocks technician schedule) |
+| `BookedIn` | `confirmed` | Confirmed appointment |
 | `CheckIn` | `in-progress` | Vehicle checked into workshop |
 | `Completed` | `completed` | Service complete (locked, immutable) |
 | `Cancelled` | `cancelled` | Cancelled appointment (locked, immutable) |

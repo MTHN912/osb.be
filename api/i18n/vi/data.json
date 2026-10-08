@@ -46,8 +46,6 @@
   "SERVICE_ALREADY_IN_PACKAGE": "Dịch vụ đã thuộc gói này.",
   "SERVICE_CODE_MISMATCH": "Mã dịch vụ không khớp với mã định danh dịch vụ {id}.",
   "SERVICE_NOT_FOUND_OR_INACTIVE": "Dịch vụ không tồn tại hoặc đã bị vô hiệu hóa: {ids}.",
-  "TECHNICIAN_NOT_FOUND": "Không tìm thấy kỹ thuật viên có ID {id} hoặc kỹ thuật viên không khả dụng.",
-  "TECHNICIAN_UNASSIGNED": "Kỹ thuật viên bất kỳ khả dụng",
   "UNIQUE_CONSTRAINT_FAILED": "Trùng lặp dữ liệu trên trường: {fields}.",
   "UNKNOWN_MODEL": "Không tìm thấy model Prisma: {model}.",
   "WELCOME_MAIL_FAILED": "Gửi email chào mừng thất bại: {error}"
