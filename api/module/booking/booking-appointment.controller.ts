@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { BookingAppointmentService } from './booking-appointment.service';
 import { DealerId } from '../../shared/decorators/dealer-id.decorator';
-import { AvailableTechniciansDto, TimeSlotsPeriodDto } from './dto/booking.dto';
+import { TimeSlotsPeriodDto } from './dto/booking.dto';
 
 @Controller('booking-appointment')
 export class BookingAppointmentController {
@@ -12,10 +12,5 @@ export class BookingAppointmentController {
   getTimeSlotsPeriod(@Body() dto: TimeSlotsPeriodDto, @DealerId() dealerId?: number) {
     return this.appointmentService.getTimeSlotsPeriod(dto, dealerId);
   }
-
-  @Post('available-technicians')
-  @HttpCode(HttpStatus.OK)
-  getAvailableTechnicians(@Body() dto: AvailableTechniciansDto, @DealerId() dealerId?: number) {
-    return this.appointmentService.getAvailableTechnicians(dto, dealerId);
-  }
 }
+

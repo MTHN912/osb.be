@@ -1,27 +1,41 @@
 <mjml>
   <mj-head>
+    <mj-title>Welcome to {{dealerName}}</mj-title>
+    <mj-preview>Welcome to {{dealerName}} Online Service Booking</mj-preview>
     <mj-attributes>
-      <mj-all font-family="Helvetica, Arial, sans-serif" />
-      <mj-text color="#1f2933" font-size="14px" line-height="22px" />
+      <mj-all font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" />
+      <mj-text color="#272F3E" font-size="14px" line-height="22px" padding="0 0 12px 0" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="#f4f5f7">
-    <mj-section background-color="#0b1f3a" padding="24px">
-      <mj-column>
-        <mj-text color="#ffffff" font-size="22px" font-weight="bold">{{dealerName}}</mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="#ffffff" padding="24px">
-      <mj-column>
-        <mj-text>Hi {{customerName}},</mj-text>
-        <mj-text>Your account has been created. You can now book and manage your car service appointments online.</mj-text>
-        <mj-button background-color="#1c64f2" href="{{bookingUrl}}">Book a service</mj-button>
-      </mj-column>
-    </mj-section>
-    <mj-section padding="16px">
-      <mj-column>
-        <mj-text align="center" color="#7b8794" font-size="12px">{{dealerName}} · {{dealerAddress}} · {{dealerPhone}}<br />© {{currentYear}}</mj-text>
-      </mj-column>
-    </mj-section>
+  <mj-body background-color="#F4F6F9">
+    <mj-wrapper padding="24px 16px">
+      <mj-include path="./header.mjml" />
+
+      <mj-section background-color="#FFFFFF" padding="32px 28px 24px 28px">
+        <mj-column>
+          <mj-text font-size="18px" font-weight="700" color="#272F3E" padding-bottom="8px">
+            Hi {{customerName}},
+          </mj-text>
+          <mj-text font-size="14px" line-height="22px" color="#4B5563">
+            Welcome to <strong>{{dealerName}}</strong>! Your account has been successfully created.
+          </mj-text>
+          <mj-text font-size="14px" line-height="22px" color="#4B5563">
+            You can now easily book service appointments, track your service history, and manage your vehicle details online anytime.
+          </mj-text>
+
+          <mj-button background-color="#2A53EE" color="#FFFFFF" font-size="14px" font-weight="600" border-radius="2px" padding="16px 0 24px 0" href="{{bookingUrl}}">
+            BOOK A SERVICE
+          </mj-button>
+
+          <mj-divider border-color="#E2E8F0" border-width="1px" padding="8px 0 16px 0" />
+
+          <mj-text font-size="12px" line-height="18px" color="#64748B">
+            Need help? Contact our support team directly at <a href="tel:{{dealerPhone}}" style="color: #2A53EE; text-decoration: none;">{{dealerPhone}}</a>.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+      <mj-include path="./footer.mjml" />
+    </mj-wrapper>
   </mj-body>
 </mjml>

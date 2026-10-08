@@ -117,7 +117,6 @@ model User {
   phoneNumber         String?
   avatar              String?
   isActive            Boolean   @default(true)
-  isBookable          Boolean   @default(true)
   lastLoginAt         DateTime?
   currentRefreshToken String?
   createdAt           DateTime  @default(now())
@@ -126,7 +125,6 @@ model User {
   dealer            Dealer?            @relation(fields: [dealerId], references: [id])
   roles             UserRole[]
   permissions       UserPermission[]
-  bookings          Booking[]
 
   @@map("users")
 }
@@ -263,7 +261,6 @@ model Booking {
   id                Int           @id @default(autoincrement())
   dealerId          Int
   customerId        Int?
-  technicianId      Int?
   vehicleId         Int?
   bookingDate       DateTime
   status            BookingStatus @default(Pending)
@@ -274,14 +271,12 @@ model Booking {
   estimatedPrice    Float?
   currency          String        @default("USD")
   serviceNote       String?
-  technicianNote    String?
   customerNote      String?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
   dealer          Dealer           @relation(fields: [dealerId], references: [id])
   customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  technician      User?            @relation(fields: [technicianId], references: [id], onDelete: SetNull)
   vehicle         Vehicle?         @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
   bookingServices BookingService[]
 
@@ -327,10 +322,6 @@ model Service {
   name          String
   description   String?
   kind          ServiceKind @default(Package)
-  price         Float?
-  currency      String      @default("USD")
-  duration      Int         @default(30)
-  durationUnit  String      @default("minutes")
   sizeSensitive Boolean     @default(false)
   imageUrl      String?
   isActive      Boolean     @default(true)

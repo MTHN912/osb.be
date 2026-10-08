@@ -6,8 +6,8 @@ export type BookingMode = 'customer' | 'guest' | 'admin';
 
 export interface QuotableService {
   id: number;
-  price: number | null;
-  duration: number;
+  price?: number | null;
+  duration?: number;
   sizeSensitive: boolean;
 }
 
@@ -16,15 +16,6 @@ export interface BookingQuote {
   estimatedPrice: number | null;
   estimatedDuration: number;
 }
-
-export interface BlockingRange {
-  technicianId: number;
-  start: number;
-  end: number;
-}
-
-const MINUTE_MS = 60 * 1000;
-
 function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
 }
@@ -32,10 +23,12 @@ function roundMoney(value: number): number {
 export function quoteServices(services: QuotableService[], sizeClass?: VehicleSizeClass | null): BookingQuote {
   const items = services.map((service) => {
     const multiplier = service.sizeSensitive && sizeClass ? SIZE_MULTIPLIERS[sizeClass] : 1;
+    const basePrice = service.price ?? null;
+    const baseDuration = service.duration ?? DEFAULT_BOOKING_DURATION_MINUTES;
     return {
       serviceId: service.id,
-      price: service.price === null ? null : roundMoney(service.price * multiplier),
-      duration: Math.round(service.duration * multiplier),
+      price: basePrice === null ? null : roundMoney(basePrice * multiplier),
+      duration: Math.round(baseDuration * multiplier),
     };
   });
 
@@ -46,22 +39,6 @@ export function quoteServices(services: QuotableService[], sizeClass?: VehicleSi
     estimatedPrice: prices.length > 0 ? roundMoney(prices.reduce((sum, price) => sum + price, 0)) : null,
     estimatedDuration: items.reduce((sum, item) => sum + item.duration, 0),
   };
-}
-
-export function toRange(start: Date, durationMinutes: number): { start: number; end: number } {
-  const begin = start.getTime();
-  return { start: begin, end: begin + (durationMinutes || DEFAULT_BOOKING_DURATION_MINUTES) * MINUTE_MS };
-}
-
-export function toBlockingRanges(bookings: { technicianId: number; bookingDate: Date; estimatedDuration: number }[]): BlockingRange[] {
-  return bookings.map((booking) => ({
-    technicianId: booking.technicianId,
-    ...toRange(new Date(booking.bookingDate), booking.estimatedDuration),
-  }));
-}
-
-export function isTechnicianFree(technicianId: number, ranges: BlockingRange[], range: { start: number; end: number }): boolean {
-  return !ranges.some((r) => r.technicianId === technicianId && range.start < r.end && range.end > r.start);
 }
 
 export function isLocked(status: BookingStatus, locked: BookingStatus[]): boolean {

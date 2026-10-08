@@ -6,20 +6,27 @@ export interface MailDealer {
 
 export interface BookingMailService {
   name: string;
-  duration: number;
-  price: number | null;
+  duration?: number;
+  price?: number | null;
 }
 
 export interface BookingMailData {
   to: string;
   customerName: string;
+  customerEmail?: string;
+  customerMobile?: string;
+  customerAddress?: string;
   bookingId: number;
   bookingDate: Date;
-  vehicle: string;
+  licensePlate?: string;
+  make?: string;
+  model?: string;
+  year?: string | number;
+  vin?: string;
+  vehicle?: string;
   services: BookingMailService[];
-  estimatedDuration: number;
-  estimatedPrice: number | null;
-  technicianName: string;
-  customerNote: string | null;
+  estimatedDuration?: number;
+  estimatedPrice?: number | null;
+  customerNote?: string | null;
   dealer: MailDealer;
 }

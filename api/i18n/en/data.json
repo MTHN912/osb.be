@@ -46,8 +46,6 @@
   "SERVICE_ALREADY_IN_PACKAGE": "Service is already part of this package.",
   "SERVICE_CODE_MISMATCH": "Service code does not match the service ID {id}.",
   "SERVICE_NOT_FOUND_OR_INACTIVE": "Services not found or inactive: {ids}.",
-  "TECHNICIAN_NOT_FOUND": "Technician with ID {id} was not found or is unavailable.",
-  "TECHNICIAN_UNASSIGNED": "Any available technician",
   "UNIQUE_CONSTRAINT_FAILED": "Unique constraint failed on field(s): {fields}.",
   "UNKNOWN_MODEL": "Unknown Prisma model: {model}.",
   "WELCOME_MAIL_FAILED": "Welcome mail failed: {error}"

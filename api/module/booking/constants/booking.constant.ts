@@ -1,12 +1,9 @@
-import { TECHNICIAN_PUBLIC_SELECT } from '../../../core/user/constants/user.constant';
 import { VEHICLE_DEFAULT_INCLUDE } from '../../vehicle/constants/vehicle.constant';
 
 export const SERVICE_QUOTE_SELECT = {
   id: true,
   code: true,
   name: true,
-  price: true,
-  duration: true,
   sizeSensitive: true,
 };
 
@@ -17,6 +14,12 @@ export const BOOKING_CUSTOMER_SELECT = {
   lastName: true,
   phoneNumber: true,
   companyName: true,
+  addressLine1: true,
+  addressLine2: true,
+  suburb: true,
+  city: true,
+  state: true,
+  zipCode: true,
   isGuest: true,
 };
 
@@ -30,7 +33,6 @@ export const BOOKING_DEALER_SELECT = {
 
 export const BOOKING_DETAIL_INCLUDE = {
   customer: { select: BOOKING_CUSTOMER_SELECT },
-  technician: { select: TECHNICIAN_PUBLIC_SELECT },
   dealer: { select: BOOKING_DEALER_SELECT },
   vehicle: { include: VEHICLE_DEFAULT_INCLUDE },
   bookingServices: {
@@ -48,8 +50,3 @@ export const BOOKING_DETAIL_INCLUDE = {
   },
 };
 
-export const BLOCKING_BOOKING_SELECT = {
-  technicianId: true,
-  bookingDate: true,
-  estimatedDuration: true,
-};

@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, CreateTechnicianDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/user.dto';
 import { BaseSearchDto } from '../crud/dto/base-search.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DealerId } from '../../shared/decorators/dealer-id.decorator';
@@ -27,17 +27,5 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   search(@Body() dto: BaseSearchDto, @DealerId() dealerId?: number) {
     return this.userService.searchUsers(dto, dealerId);
-  }
-
-  @Post('technicians')
-  @UseGuards(JwtAuthGuard)
-  createTechnician(@Body() dto: CreateTechnicianDto, @DealerId() dealerId?: number) {
-    return this.userService.createTechnician(dto, dealerId);
-  }
-
-  @Post('technicians/search')
-  @HttpCode(HttpStatus.OK)
-  searchTechnicians(@Body() dto: BaseSearchDto, @DealerId() dealerId?: number) {
-    return this.userService.searchTechnicians(dto, dealerId);
   }
 }
